@@ -1,5 +1,5 @@
 import React, { ChangeEvent, SyntheticEvent, useState } from "react";
-import { Alignment, Fit, Layout, RiveState, useRive, UseRiveParameters } from "rive-react";
+import { Alignment, Fit, Layout, RiveState, StateMachineInput, useRive, UseRiveParameters, useStateMachineInput } from "rive-react";
 import './LoginFormComponent.css'
 
 const LOGIN_PASSWORD = 'teddy';
@@ -15,10 +15,41 @@ function LoginFormComponent(riveProps: UseRiveParameters = {}){
         alignment: Alignment.Center,
     }),
     ...riveProps,
-});
+    });
 
     const [userValue, setUserValue] = useState('');
     const [passValue, setPassValue] = useState('');
+
+    const isCheckingInput: StateMachineInput | null = useStateMachineInput(
+        riveInstance,
+        STATE_MACHINE_NAME,
+        'isChecking'
+    );
+
+    const numLookInput: StateMachineInput | null = useStateMachineInput(
+        riveInstance,
+        STATE_MACHINE_NAME,
+        'numLook'
+    );
+
+    const trigSuccessInput: StateMachineInput | null = useStateMachineInput(
+        riveInstance,
+        STATE_MACHINE_NAME,
+        'trigSuccess'
+    );
+
+    const trigFailInput: StateMachineInput | null = useStateMachineInput(
+    riveInstance,
+    STATE_MACHINE_NAME,
+    'trigFail'
+    );
+
+    const isHandsUpInput: StateMachineInput | null = useStateMachineInput(
+    riveInstance,
+    STATE_MACHINE_NAME,
+    'isHandsUp'
+    );
+
 
     const onUsernameChange = (e: ChangeEvent<HTMLInputElement>) => {
         const newVal = e.target.value;
@@ -55,6 +86,8 @@ function LoginFormComponent(riveProps: UseRiveParameters = {}){
                                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                                     setPassValue(e.target.value)
                                 }
+                                onFocus={() => (isHandsUpInput!.value = true)}
+                                onBlur={() => (isHandsUpInput!.value = false)}
                             />
                         </label>
                         <button className="login-btn">Login</button>
