@@ -25,7 +25,7 @@
   }
   
   .form-container {
-    border-radius: var(--border-radius-2x);
+    border-radius: 20px;
     background-color: #ffffff;
     padding: var(--spacing-4x);
     box-sizing: border-box;
