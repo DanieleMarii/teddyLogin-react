@@ -1,10 +1,22 @@
 import React, { ChangeEvent, SyntheticEvent, useState } from "react";
-import { UseRiveParameters } from "rive-react";
+import { Alignment, Fit, Layout, RiveState, useRive, UseRiveParameters } from "rive-react";
 import './LoginFormComponent.css'
 
 const LOGIN_PASSWORD = 'teddy';
+const STATE_MACHINE_NAME = 'Login Machine';
 
 function LoginFormComponent(riveProps: UseRiveParameters = {}){
+    const {rive: riveInstance, RiveComponent}: RiveState = useRive({
+        src: './login-teddy.riv',
+        stateMachines: STATE_MACHINE_NAME,
+        autoplay: true,
+        layout: new Layout({
+        fit: Fit.Cover,
+        alignment: Alignment.Center,
+    }),
+    ...riveProps,
+});
+
     const [userValue, setUserValue] = useState('');
     const [passValue, setPassValue] = useState('');
 
@@ -18,6 +30,9 @@ function LoginFormComponent(riveProps: UseRiveParameters = {}){
      return(
         <div className="login-form-component-root">
             <div className="login-form-wrapper">
+                <div className="rive-wrapper">
+                    <RiveComponent className="rive-container"/>
+                </div>
                 <div className="form-container">
                     <form onSubmit={onSubmit}>
                         <label>
