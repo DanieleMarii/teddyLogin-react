@@ -1,7 +1,8 @@
-import React, { ChangeEvent, SyntheticEvent, useState } from "react";
+import React, { ChangeEvent, SyntheticEvent, useEffect, useRef, useState } from "react";
 import { Alignment, Fit, Layout, RiveState, StateMachineInput, useRive, UseRiveParameters, useStateMachineInput } from "rive-react";
 import './LoginFormComponent.css'
 
+const LOGIN_TEXT = 'Login'
 const LOGIN_PASSWORD = 'teddy';
 const STATE_MACHINE_NAME = 'Login Machine';
 
@@ -50,14 +51,46 @@ function LoginFormComponent(riveProps: UseRiveParameters = {}){
     'isHandsUp'
     );
 
+    const [inputLookMultiplier, setInputLookMultiplier] = useState(0)
+    const inputRef = useRef(null);
 
+    useEffect(() => {
+        if(inputRef?.current && !inputLookMultiplier){
+            setInputLookMultiplier((inputRef.current as HTMLInputElement).offsetWidth / 100);
+        }
+    }, [inputRef]);
+    
     const onUsernameChange = (e: ChangeEvent<HTMLInputElement>) => {
         const newVal = e.target.value;
         setUserValue(newVal);
-    }
+        if (!isCheckingInput!.value) {
+          isCheckingInput!.value = true;
+        }
+        const numChars = newVal.length;
+        numLookInput!.value = numChars * inputLookMultiplier;
+    };
 
-    const onSubmit = (e: SyntheticEvent) => {};
+    const onUsernameFocus = () => {
+        isCheckingInput!.value = true;
+        if (numLookInput!.value !== userValue.length * inputLookMultiplier) {
+          numLookInput!.value = userValue.length * inputLookMultiplier;
+        }
+    };
 
+    const [loginButtonText, setLoginButtonText] = useState(LOGIN_TEXT)
+    const onSubmit = (e: SyntheticEvent) => {
+        setLoginButtonText('Checking...');
+        setTimeout(() => {
+          setLoginButtonText(LOGIN_TEXT);
+          passValue === LOGIN_PASSWORD
+            ? trigSuccessInput!.fire()
+            : trigFailInput!.fire();
+        }, 1500);
+        e.preventDefault();
+        return false;
+      };
+
+    
      return(
         <div className="login-form-component-root">
             <div className="login-form-wrapper">
@@ -71,9 +104,12 @@ function LoginFormComponent(riveProps: UseRiveParameters = {}){
                                 type="text"
                                 className="form-username"
                                 name="username"
+                                ref={inputRef}
                                 placeholder="Username"
                                 value={userValue}
-                                onChange={onUsernameChange} 
+                                onChange={onUsernameChange}
+                                onFocus={onUsernameFocus}
+                                onBlur={() => (isCheckingInput!.value = false)} 
                             />
                         </label>
                         <label>
@@ -90,7 +126,7 @@ function LoginFormComponent(riveProps: UseRiveParameters = {}){
                                 onBlur={() => (isHandsUpInput!.value = false)}
                             />
                         </label>
-                        <button className="login-btn">Login</button>
+                        <button className="login-btn">{loginButtonText}</button>
                     </form>
                 </div>
             </div>
