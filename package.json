@@ -9,7 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "node-modules": "^1.0.1",
+    "@hapi/hoek": "^10.0.1",
+    "node-modules": "^0.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "rive-react": "^3.0.32"
